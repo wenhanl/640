@@ -1,11 +1,4 @@
-/**
- * 
- */
 
-/**
- * @author CGJ
- *
- */
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,11 +6,6 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-
-/**
- * 
- */
 
 /**
  * @author CGJ

@@ -1,8 +1,4 @@
 /**
- * 
- */
-
-/**
  * @author CGJ
  *
  */
@@ -58,32 +54,5 @@ public class RMIMessage {
 	void setretvalue(Object retvalue){
 		this.retvalue = retvalue;
 	}
-	
-//	//return value message
-//	public RMIMessage(Type type, Object retvalue) {
-//		this.type = type;
-//        this.retvalue = retvalue;
-//    }
-//	//lookup message 
-//	public RMIMessage(Type type, String ObjectName) {
-//		this.type = type;
-//        this.ObjectName = ObjectName;
-//    }
-//	//invoke method
-//	public RMIMessage(Type type, String ObjectName, String method, Object[] args) {
-//		this.type = type;
-//        this.ObjectName = ObjectName;
-//        this.method = method;
-//        this.args = args;
-//    }
-//	//list remote object
-//	public RMIMessage(Type type) {
-//		this.type = type;
-//	}
-//	//exception message
-//	public RMIMessage(Type type,Exception exception) {
-//		this.type = type;
-//		this.exception = exception;
-//	}
 
 }
