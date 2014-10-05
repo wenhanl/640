@@ -3,8 +3,13 @@
  *
  */
 
+import lombok.*;
 
-public class RMIMessage {
+import java.io.*;
+
+@Data
+@NoArgsConstructor
+public class RMIMessage implements Serializable{
 	
 	public static enum Type { LOOKUP, LIST, INVOKE, RETURN, EXCEPTION }
 	private Type type;
@@ -13,46 +18,18 @@ public class RMIMessage {
 	private String method;
 	private Object[] args;
 	private Exception exception;
-	private Object retvalue;
-	
-	public RMIMessage(){}
-	
-	Type getType(){
-		return type;
-	}
-	String getobjectName(){
-		return objectName;
-	}
-	String getmethod(){
-		return method;
-	}
-	Object[] getargs(){
-		return args;
-	}
-	Exception getexception(){
-		return exception;
-	}
-	Object getretvalue(){
-		return retvalue;
-	}
-	
-	void setType(Type type){
-		this.type = type;
-	}
-	void setobjectName(String objectName){
-		this.objectName = objectName;
-	}
-	void setmethod(String method){
-		this.method = method;
-	}
-	void setargs(Object[] args){
-		this.args = args;
-	}
-	void setexception(Exception exception){
-		this.exception = exception;
-	}
-	void setretvalue(Object retvalue){
-		this.retvalue = retvalue;
-	}
+	private Object retValue;
+
+    public static byte[] serialize(Object obj) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(out);
+        os.writeObject(obj);
+        return out.toByteArray();
+    }
+    public static Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        ObjectInputStream is = new ObjectInputStream(in);
+        return is.readObject();
+    }
 
 }

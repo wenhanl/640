@@ -14,17 +14,19 @@ import java.net.Socket;
 
 public class RMIDispathcer implements Runnable {
 
-	private Socket socket;
+	private MessageManager msgManager;
+    private RMIMessage inMsg;
 	
-	public RMIDispathcer (Socket socket){
-		this.socket = socket;
+	public RMIDispathcer (MessageManager msgManager, RMIMessage inMsg){
+		this.msgManager = msgManager;
+        this.inMsg = inMsg;
 	}
 	
 	public Object invokeMethod (RMIMessage inMsg) throws Remote640Exception{
 		
-		Object object = RMIRegistry.lookupObject(inMsg.getobjectName());
-        Object[] args = inMsg.getargs();
-        String methodName = inMsg.getmethod();
+		Object object = RMIRegistry.lookupObject(inMsg.getObjectName());
+        Object[] args = inMsg.getArgs();
+        String methodName = inMsg.getMethod();
         
         Method method;
         
@@ -55,23 +57,14 @@ public class RMIDispathcer implements Runnable {
 	
 	@Override
 	public void run() {
-		MessageManager msgManager = new MessageManager(socket);
-		RMIMessage inMsg = null;
 		try {
-			inMsg = msgManager.receiveMessage();
-		} catch (ClassNotFoundException | IOException e1) {
-			System.err.println("Dispatcher receive message error: " + e1.getMessage());
-			e1.printStackTrace();
-		}
-		
-		try {
-			msgManager.Sendreturnvalue(invokeMethod(inMsg));
+			msgManager.sendReturnValue(invokeMethod(inMsg));
 		} catch (IOException e) {
 			System.err.println("Dispatcher send return value error: " + e.getMessage());
 			e.printStackTrace();
 		} catch (Remote640Exception e) {
 			try {
-				msgManager.SendExpectionMessage(e);
+				msgManager.sendExpectionMessage(e);
 			} catch (IOException e1) {
 				System.err.println("Dispatcher send exception error: " + e1.getMessage());
 				e1.printStackTrace();

@@ -1,8 +1,12 @@
 
+import net.NetObject;
+import net.Server;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.channels.SocketChannel;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,12 +19,12 @@ public class RMIRegistry implements Runnable {
 	
     private static Map<String, RemoteObjectRef> nameToRef;
     private static Map<String, Object> nameToObj;
-    private ServerSocket regSocket;
+    private Server server;
     
     public RMIRegistry(int regPort) throws IOException {
     	nameToRef = Collections.synchronizedMap(new HashMap<String, RemoteObjectRef>());
     	nameToObj = Collections.synchronizedMap(new HashMap<String, Object>());
-    	regSocket = new ServerSocket(regPort);
+        server = new Server(regPort);
     }
     
 	void bind(String objectName, Object object) throws UnknownHostException{
@@ -60,46 +64,58 @@ public class RMIRegistry implements Runnable {
     		keys[i] = (String)arr[i];
     	return keys;
     }
-	
+
+    /**
+     * How could you forget add a while(true)....Your program exit after it got first message
+     */
 	public void run() {
-		Socket socket = null;
-		try {
-			socket = regSocket.accept();
-		} catch (IOException e) {
-			System.err.println("Registry received socket from client error!");
-			e.printStackTrace();
-		}
-		MessageManager msgManger = new MessageManager(socket);
-		RMIMessage inMsg = null;
-		try {
-			inMsg = msgManger.receiveMessage();
-		} catch (ClassNotFoundException e) {
-			System.err.println("Registry receive messge error: " + e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.err.println("Registry receive messge error: " + e.getMessage());
-			e.printStackTrace();
-		}
-		
-		if(inMsg.getType() == RMIMessage.Type.LOOKUP){
-			RemoteObjectRef ref = null;
-			try {
-				ref = lookupRef(inMsg.getobjectName());
-				msgManger.Sendreturnvalue(ref);
-			} catch (Remote640Exception e) {
-				System.err.println("Registry LOOKUP reference error: " + e.getMessage());				
-			} catch (IOException e) {
-				System.err.println("Registry send messge error: " + e.getMessage());
-			}
-		} 
-		else if (inMsg.getType() == RMIMessage.Type.LIST) {
-			String[] resStrings = listObjectName();
-			try {
-				msgManger.Sendreturnvalue(resStrings);
-			} catch (IOException e) {
-				System.err.println("Registry send messge error: " + e.getMessage());
-				e.printStackTrace();
-			}
-		}
+
+        while(true){
+            NetObject obj = server.listen();
+
+            switch (obj.type){
+                case CONNECTION:
+                    System.out.println("New Connection Established");
+                    break;
+                case DATA:
+                    MessageManager msgManger = new MessageManager(server, obj.sock);
+                    RMIMessage inMsg = null;
+                    try {
+                        inMsg = (RMIMessage) RMIMessage.deserialize(obj.data);
+                    } catch (IOException e) {
+                        System.err.println("RMIMessage receive failed: " + e.getMessage());
+                    } catch (ClassNotFoundException e) {
+                        System.err.println("RMIMessage deserialize failed: " + e.getMessage());
+                    }
+
+                    if(inMsg.getType() == RMIMessage.Type.LOOKUP){
+                        RemoteObjectRef ref = null;
+                        try {
+                            ref = lookupRef(inMsg.getObjectName());
+                            msgManger.sendReturnValue(ref);
+                        } catch (Remote640Exception e) {
+                            System.err.println("Registry LOOKUP reference error: " + e.getMessage());
+                        } catch (IOException e) {
+                            System.err.println("Registry send messge error: " + e.getMessage());
+                        }
+                    }
+                    else if (inMsg.getType() == RMIMessage.Type.LIST) {
+                        String[] resStrings = listObjectName();
+                        try {
+                            msgManger.sendReturnValue(resStrings);
+                        } catch (IOException e) {
+                            System.err.println("Registry send messge error: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
+                case EXCEPTION:
+                    System.out.println("Connection reset");
+                    break;
+                default:
+                    System.err.println("Type Error");
+            }
+        }
+
 	}
 }

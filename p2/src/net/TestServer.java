@@ -10,7 +10,7 @@ import java.io.UnsupportedEncodingException;
 public class TestServer {
 
     public static void main(String[] args) {
-        Server server = new Server();
+        Server server = new Server(15605);
 
         while (true) {
             NetObject obj = server.listen();

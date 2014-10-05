@@ -19,7 +19,6 @@ public class Server {
 
     private ServerSocketChannel serverChannel;
     private Selector selector;
-    private final int port = 15640;
     // Num of sockets
     private int connections;
     // Current connections
@@ -28,7 +27,7 @@ public class Server {
     private ByteBuffer readBuffer;
     private int bufferSize = 500;
 
-    public Server(){
+    public Server(int port){
         try {
             serverChannel = ServerSocketChannel.open();
             serverChannel.socket().bind(new InetSocketAddress(port));
@@ -73,6 +72,7 @@ public class Server {
                     connections++;
 
                     ret.type = NetObject.NetType.CONNECTION;
+                    ret.sock = sc;
 
                 }
                 // Incoming data

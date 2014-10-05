@@ -16,7 +16,7 @@ public class Remote640Stub implements Remote640 {
 	
 	protected Object invokeMethod (String method, Object[] args) throws Exception {
 		MessageManager messageManager = new MessageManager(ref.getHostname(), ref.getPort());
-		messageManager.SendInvokeMessage(ref.getObjectName(), method, args);
+		messageManager.sendInvokeMessage(ref.getObjectName(), method, args);
 		
 		Object retvalue = null;
 		RMIMessage resMessage = null;
