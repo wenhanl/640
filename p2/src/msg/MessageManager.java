@@ -1,3 +1,5 @@
+package msg;
+
 /**
  * @author CGJ
  *
@@ -5,12 +7,9 @@
 import net.Client;
 import net.NetObject;
 import net.Server;
+import reg.RemoteObjectRef;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
 
 
@@ -34,8 +33,14 @@ public class MessageManager {
     }
 
 
-    public void sendMessage(RMIMessage message) throws IOException {
-        byte[] msg = RMIMessage.serialize(message);
+    public void sendMessage(RMIMessage message){
+
+        byte[] msg = new byte[0];
+        try {
+            msg = RMIMessage.serialize(message);
+        } catch (IOException e) {
+            System.err.println("Fail to serialize: " + e.getMessage());
+        }
 
         if(type == Type.SERVER){
             server.write(socket, msg);
@@ -44,19 +49,48 @@ public class MessageManager {
         }
     }
 
+    /**
+     * Careful using this method. Only works for DATA received
+     * New connection or closed connection packet will cause an error
+     * @return RMIMessage received
+     */
+    public RMIMessage receiveOneMessage(){
+        NetObject ret = null;
+        if(type == Type.SERVER){
+            ret = server.listen();
+        } else if (type == Type.CLIENT) {
+            ret = client.listen();
+        }
+        // Ignore not DATA network packet
+        if(ret.type != NetObject.NetType.DATA){
+            System.out.println("Not receiving data");
+            return null;
+        }
+
+        RMIMessage msg = null;
+        try {
+            msg = (RMIMessage) RMIMessage.deserialize(ret.data);
+        } catch (IOException e) {
+            System.err.println("Fail to deserialize: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.err.println("Fail find class: " + e.getMessage());
+        }
+
+        return msg;
+    }
 
     /**
      * receiveMessage method abandoned in order to support concurrency
      *
      */
 
-    public void sendReturnValue(Object retvalue) throws IOException{
+    public void sendReturnValue(Object retvalue){
         RMIMessage message = new RMIMessage();
         message.setType(RMIMessage.Type.RETURN);
         message.setRetValue(retvalue);
         sendMessage(message);
     }
-    public void sendInvokeMessage(String objectName, String method, Object[] args) throws IOException{
+    public void sendInvokeMessage(String objectName, String method, Object[] args){
         RMIMessage message = new RMIMessage();
         message.setType(RMIMessage.Type.INVOKE);
         message.setObjectName(objectName);
@@ -64,18 +98,18 @@ public class MessageManager {
         message.setArgs(args);
         sendMessage(message);
     }
-    public void sendLookupMessage(String objectName) throws IOException{
+    public void sendLookupMessage(String objectName){
         RMIMessage message = new RMIMessage();
         message.setType(RMIMessage.Type.LOOKUP);
         message.setObjectName(objectName);
         sendMessage(message);
     }
-    public void sendListMessage() throws IOException{
+    public void sendListMessage(){
         RMIMessage message = new RMIMessage();
         message.setType(RMIMessage.Type.LIST);
         sendMessage(message);
     }
-    public void sendExpectionMessage(Exception exception) throws IOException{
+    public void sendExpectionMessage(Exception exception){
         RMIMessage message = new RMIMessage();
         message.setType(RMIMessage.Type.EXCEPTION);
         message.setException(exception);

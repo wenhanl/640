@@ -1,15 +1,16 @@
-/**
- * 
- */
 
 /**
  * @author CGJ
  *
  */
+import msg.MessageManager;
+import msg.RMIMessage;
+import reg.RMIRegistry;
+import remote640.Remote640Exception;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.Socket;
 
 
 public class RMIDispathcer implements Runnable {
@@ -22,7 +23,7 @@ public class RMIDispathcer implements Runnable {
         this.inMsg = inMsg;
 	}
 	
-	public Object invokeMethod (RMIMessage inMsg) throws Remote640Exception{
+	public Object invokeMethod (RMIMessage inMsg) throws Remote640Exception {
 		
 		Object object = RMIRegistry.lookupObject(inMsg.getObjectName());
         Object[] args = inMsg.getArgs();
@@ -59,16 +60,8 @@ public class RMIDispathcer implements Runnable {
 	public void run() {
 		try {
 			msgManager.sendReturnValue(invokeMethod(inMsg));
-		} catch (IOException e) {
-			System.err.println("Dispatcher send return value error: " + e.getMessage());
-			e.printStackTrace();
-		} catch (Remote640Exception e) {
-			try {
-				msgManager.sendExpectionMessage(e);
-			} catch (IOException e1) {
-				System.err.println("Dispatcher send exception error: " + e1.getMessage());
-				e1.printStackTrace();
-			}
+		} catch (Remote640Exception e){
+	        msgManager.sendExpectionMessage(e);
 		} 
 	}
 }

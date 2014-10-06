@@ -1,22 +1,24 @@
+package reg;
 
+import msg.MessageManager;
+import msg.RMIMessage;
 import net.NetObject;
 import net.Server;
+import remote640.Remote640Exception;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author CGJ
  *
  */
 public class RMIRegistry implements Runnable {
-	
+	private String hostname;
+    private int port;
     private static Map<String, RemoteObjectRef> nameToRef;
     private static Map<String, Object> nameToObj;
     private Server server;
@@ -24,32 +26,26 @@ public class RMIRegistry implements Runnable {
     public RMIRegistry(int regPort) throws IOException {
     	nameToRef = Collections.synchronizedMap(new HashMap<String, RemoteObjectRef>());
     	nameToObj = Collections.synchronizedMap(new HashMap<String, Object>());
+        hostname = InetAddress.getLocalHost().getCanonicalHostName();
+        port = regPort;
         server = new Server(regPort);
     }
     
-	void bind(String objectName, Object object) throws UnknownHostException{
-		RemoteObjectRef ref = new RemoteObjectRef(RMIServer.getHostname(), RMIServer.getserverPort(), objectName, object.getClass().getName());
+	public void bind(String objectName, Object object) throws UnknownHostException{
+		RemoteObjectRef ref = new RemoteObjectRef(hostname, port, objectName, object.getClass().getName());
 		nameToObj.put(objectName, object);
 		nameToRef.put(objectName, ref);
 	}
 	
-	void rebind(String objectName, Object object) throws UnknownHostException{
+	public void rebind(String objectName, Object object) throws UnknownHostException{
 		bind(objectName,object);
 	}
 	
-	void unbind(String objectName, Object object){
-		if(nameToObj.containsKey(objectName)){
-			nameToObj.remove(objectName);
-			nameToRef.remove(objectName);
-		}
-	}
-	
-	public RemoteObjectRef lookupRef (String objectname) throws Remote640Exception{
+	public RemoteObjectRef lookupRef (String objectname) throws Remote640Exception {
 		if (nameToRef.containsKey(objectname)) {
             return nameToRef.get(objectname);
-        } 
-		else {
-            throw new Remote640Exception("ObjectName" + objectname + "not exist in registry!");
+        } else {
+            throw new Remote640Exception("ObjectName " + objectname + " not exist in registry!");
         }
 	}
 	
@@ -57,12 +53,13 @@ public class RMIRegistry implements Runnable {
 		return nameToObj.get(objectname);
 	}
 	
-    public String[] listObjectName() {
-    	Object[] arr = nameToRef.keySet().toArray();
-    	String[] keys = new String[nameToRef.size()];
-    	for(int i=0;i<arr.length;i++)
-    		keys[i] = (String)arr[i];
-    	return keys;
+    public ArrayList<String> listObjectName() {
+    	Iterator iterator = nameToRef.keySet().iterator();
+        ArrayList<String> arrayList = new ArrayList<>();
+        while(iterator.hasNext()){
+            arrayList.add((String) iterator.next());
+        }
+        return arrayList;
     }
 
     /**
@@ -75,13 +72,14 @@ public class RMIRegistry implements Runnable {
 
             switch (obj.type){
                 case CONNECTION:
-                    System.out.println("New Connection Established");
+                    System.out.println("Connection Established: On RMIRegistry");
                     break;
                 case DATA:
                     MessageManager msgManger = new MessageManager(server, obj.sock);
                     RMIMessage inMsg = null;
                     try {
                         inMsg = (RMIMessage) RMIMessage.deserialize(obj.data);
+                        System.out.println("RMI Message recieved: " + inMsg.toString());
                     } catch (IOException e) {
                         System.err.println("RMIMessage receive failed: " + e.getMessage());
                     } catch (ClassNotFoundException e) {
@@ -95,18 +93,12 @@ public class RMIRegistry implements Runnable {
                             msgManger.sendReturnValue(ref);
                         } catch (Remote640Exception e) {
                             System.err.println("Registry LOOKUP reference error: " + e.getMessage());
-                        } catch (IOException e) {
-                            System.err.println("Registry send messge error: " + e.getMessage());
+                            msgManger.sendExpectionMessage(e);
                         }
                     }
                     else if (inMsg.getType() == RMIMessage.Type.LIST) {
-                        String[] resStrings = listObjectName();
-                        try {
-                            msgManger.sendReturnValue(resStrings);
-                        } catch (IOException e) {
-                            System.err.println("Registry send messge error: " + e.getMessage());
-                            e.printStackTrace();
-                        }
+                        ArrayList<String> resStrings = listObjectName();
+                        msgManger.sendReturnValue(resStrings);
                     }
                     break;
                 case EXCEPTION:

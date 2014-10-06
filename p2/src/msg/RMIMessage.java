@@ -1,11 +1,20 @@
-/**
- * @author CGJ
- *
- */
+package msg;
 
 import lombok.*;
-
 import java.io.*;
+
+/**
+ * RMI Message Object
+ *
+ * @author CGJ
+ */
+
+
+/**
+ * You don't need to add getter, setter, constructor with no arg.
+ * Annotations below will take care of all those
+ * This feature is provided by Lombok.
+ */
 
 @Data
 @NoArgsConstructor

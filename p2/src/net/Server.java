@@ -7,9 +7,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by wenhanl on 14-10-3.
@@ -25,7 +23,7 @@ public class Server {
     private HashMap<Integer, SocketInfo> socks;
     // read buffer
     private ByteBuffer readBuffer;
-    private int bufferSize = 500;
+    private int bufferSize = 10240;
 
     public Server(int port){
         try {
@@ -104,7 +102,6 @@ public class Server {
                     }
 
                     data = new byte[readBuffer.remaining()];
-                    // Read bytes from readBuffer to data
                     readBuffer.get(data);
                     readBuffer.clear();
                     ret.type = NetObject.NetType.DATA;

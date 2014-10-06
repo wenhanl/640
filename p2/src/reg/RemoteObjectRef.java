@@ -1,14 +1,14 @@
-/**
- * 
- */
+package reg;
 
 /**
  * @author CGJ
  *
  */
 import java.io.Serializable;
+import lombok.*;
+import remote640.Remote640Stub;
 
-
+@Getter
 public class RemoteObjectRef implements Serializable{
 	/**
 	 * 
@@ -40,22 +40,5 @@ public class RemoteObjectRef implements Serializable{
 		
 		return stub;
 		
-    }
-    
-    
-    public String getHostname() {
-        return hostname;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public String getObjectName() {
-        return objectName;
-    }
-
-    public String getClassName() {
-        return className;
     }
 }

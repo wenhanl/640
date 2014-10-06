@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
  */
 public class TestClient {
     public static void main(String[] args){
-        final Client client = new Client("localhost", 15640);
+        final Client client = new Client("localhost", 15605);
 
         Thread listen = new Thread(new Runnable() {
             @Override

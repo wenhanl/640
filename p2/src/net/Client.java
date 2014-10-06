@@ -15,7 +15,7 @@ import java.util.Set;
 public class Client {
     private SocketChannel sc;
     private ByteBuffer readBuffer;
-    private int bufLen = 500;
+    private int bufLen = 10240;
     private Selector selector;
 
     /**
