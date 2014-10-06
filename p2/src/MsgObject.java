@@ -1,4 +1,3 @@
-package msg;
 
 /**
  * Message Object that contains length and data of a RMIMessage in binary

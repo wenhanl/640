@@ -1,4 +1,3 @@
-package obj;
 
 import lombok.*;
 
@@ -19,10 +18,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExampleOne {
-    private double num;
+    private Double num;
     private String str;
 
-    public double pow(double pow){
+    public double pow(Double pow){
         return Math.pow(num, pow);
     }
 

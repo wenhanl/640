@@ -1,4 +1,3 @@
-package msg;
 
 import lombok.*;
 import java.io.*;

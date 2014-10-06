@@ -1,4 +1,3 @@
-package net;
 
 import java.io.IOException;
 import java.net.SocketAddress;

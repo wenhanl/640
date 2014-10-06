@@ -3,12 +3,6 @@
  * @author CGJ
  *
  */
-import msg.MessageManager;
-import msg.RMIMessage;
-import reg.RMIRegistry;
-import remote640.Remote640Exception;
-
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

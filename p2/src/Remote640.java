@@ -1,4 +1,3 @@
-package remote640;
 
 /**
  * @author CGJ

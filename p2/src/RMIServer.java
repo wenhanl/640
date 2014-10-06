@@ -4,17 +4,7 @@
  * @author CGJ
  *
  */
-import msg.MessageManager;
-import msg.RMIMessage;
-import net.NetObject;
-import net.Server;
-import obj.ExampleOne;
-import obj.ExampleTwo;
-import reg.RMIRegistry;
-
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 
 public class RMIServer {
@@ -52,9 +42,9 @@ public class RMIServer {
                     try {
                         inMsg = (RMIMessage) RMIMessage.deserialize(rcv.data);
                     } catch (IOException e) {
-                        System.err.println("RMIMessage receive failed: " + e.getMessage());
+                        System.out.println("RMIMessage receive failed: " + e.getMessage());
                     } catch (ClassNotFoundException e) {
-                        System.err.println("RMIMessage deserialize failed: " + e.getMessage());
+                        System.out.println("RMIMessage deserialize failed: " + e.getMessage());
                     }
 
                     Thread dispather = new Thread(new RMIDispathcer(msgManager, inMsg));
@@ -64,11 +54,11 @@ public class RMIServer {
                     System.out.println("Connection reset");
                     break;
                 default:
-                    System.err.println("Type Error");
+                    System.out.println("Type Error");
             }
 
 
-		}
+		}				
 	}
 	
 	
