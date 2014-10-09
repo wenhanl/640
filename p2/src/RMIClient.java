@@ -1,22 +1,18 @@
 import java.util.ArrayList;
-
+import java.util.Iterator;
 /**
  * @author CGJ
  *
  */
 public class RMIClient {
-    private Client regClient;
+    private static Client regClient;
     private static Client serverClient;
-    private MessageManager regManager;
+    private static MessageManager regManager;
 
     public RMIClient(String hostname, int regPort, int serverPort){
-    	System.out.println("0");
         regClient = new Client(hostname, regPort);
-        System.out.println("11");
         serverClient = new Client(hostname, serverPort);
-        System.out.println("1");
         regManager = new MessageManager(regClient);
-        System.out.println("2");
     }
 
     /**
@@ -32,7 +28,7 @@ public class RMIClient {
         RMIMessage inMsg = regManager.receiveOneMessage();
         System.out.println("RMI Message recieved: " + inMsg.toString());
         RMIMessage.Type type = inMsg.getType();
-        RemoteObjectRef ref = null;		
+        RemoteObjectRef ref = null;
         if(type == RMIMessage.Type.EXCEPTION){
             throw (Remote640Exception) inMsg.getException();
         } else if (type == RMIMessage.Type.RETURN){
@@ -44,7 +40,7 @@ public class RMIClient {
         return ref;
     }
 
-    public ArrayList<String> regList(){
+    public void regList(){
         regManager.sendListMessage();
 
         RMIMessage inMsg = regManager.receiveOneMessage();
@@ -56,11 +52,22 @@ public class RMIClient {
         } else {
             System.err.println("Unexcepted packet type");
         }
-        return list;
+ 	Iterator iterator = list.iterator();
+        while(iterator.hasNext())
+            System.out.println((String) iterator.next());
+	
+	System.out.println();
+        
     }
 
-	public static void main(String[] args) {
-		RMIClient client = new RMIClient("localhost", 15440, 15640);
+     public static void main(String[] args) {
+   	 if(args.length != 1){
+   	     System.out.println("args length");
+       	     return;
+   	 }
+		
+		RMIClient client = new RMIClient(args[0], 15440, 15640);
+		client.regList();
 		RemoteObjectRef ref = null,ref2 = null;
 		try {
 			ref = client.regLookup("ExampleOne");
@@ -70,21 +77,24 @@ public class RMIClient {
 			e.printStackTrace();
 			return;
 		}
-		Double t1 = 5.0;
-		String t2 = "Distributed System: RMI";
-		
+		//This is the test cases. Feel free to modify them 
+		Double test1 = 5.0;
+		String test2 = "Distributed System: RMI";
+
 		ExampleOne_stub Stub1 = null;
 		ExampleTwo_stub Stub2 = null;
-		
+
 		Stub1 = (ExampleOne_stub) ref.localise();
 		Stub1.setClient(serverClient);
-		System.out.println(Stub1.pow(t1));
-		
+		//result of test1
+		System.out.println(Stub1.pow(test1));
+
 		Stub2 = (ExampleTwo_stub) ref2.localise();
 		Stub2.setClient(serverClient);
-		System.out.println(Stub2.reverse(t2));
+		//result of test2
+		System.out.println(Stub2.reverse(test2));
 
-		
+
 	}
 
 }
