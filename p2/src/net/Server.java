@@ -13,8 +13,6 @@ import java.util.*;
  * Created by wenhanl on 14-10-3.
  */
 public class Server {
-
-
     private ServerSocketChannel serverChannel;
     private Selector selector;
     // Num of sockets
@@ -46,8 +44,6 @@ public class Server {
         byte[] data = null;
         try {
             selector.select();
-
-
             Set<SelectionKey> keys = selector.selectedKeys();
             Iterator<SelectionKey> keyIterator = keys.iterator();
 
@@ -78,7 +74,6 @@ public class Server {
                     SocketChannel sc = (SocketChannel) key.channel();
 
                     readBuffer.clear();
-                    //clearBuffer();
                     // Switch to read mode
 
 
@@ -119,6 +114,11 @@ public class Server {
         return ret;
     }
 
+    /**
+     * Write data to a socket in this server
+     * @param sc SocketChannel - socket to write
+     * @param bytes byte[] bytes to write
+     */
     public void write(SocketChannel sc, byte[] bytes){
         ByteBuffer buffer= ByteBuffer.wrap(bytes);
         try {

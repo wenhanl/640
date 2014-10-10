@@ -25,7 +25,11 @@ public class RemoteObjectRef implements Serializable{
         this.objectName = objectName;
         this.className = className;
     }
-    
+
+    /**
+     * Localise remote object
+     * @return
+     */
     public Object localise() {
     	Object stub = null;				
 		try {

@@ -20,7 +20,13 @@ public class RMIDispathcer implements Runnable {
 		this.msgManager = msgManager;
         this.inMsg = inMsg;
 	}
-	
+
+    /**
+     * Invoke a method in local environment from remote request
+     * @param inMsg
+     * @return  Object if no exception
+     * @throws Remote640Exception
+     */
 	public Object invokeMethod (RMIMessage inMsg) throws Remote640Exception {
 		
 		Object object = RMIRegistry.lookupObject(inMsg.getObjectName());

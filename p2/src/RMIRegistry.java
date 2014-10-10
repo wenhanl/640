@@ -45,7 +45,13 @@ public class RMIRegistry implements Runnable {
 	public void rebind(String objectName, Object object) throws UnknownHostException{
 		bind(objectName,object);
 	}
-	
+
+    /**
+     * Lookup from object name
+     * @param objectname
+     * @return
+     * @throws Remote640Exception
+     */
 	public RemoteObjectRef lookupRef (String objectname) throws Remote640Exception {
 		if (nameToRef.containsKey(objectname)) {
             return nameToRef.get(objectname);
@@ -54,11 +60,20 @@ public class RMIRegistry implements Runnable {
             throw new Remote640Exception("ObjectName " + objectname + " not exist in registry!");
         }
 	}
-	
+
+    /**
+     * Get opject from name
+     * @param objectname String
+     * @return
+     */
 	public static Object lookupObject (String objectname){
 		return nameToObj.get(objectname);
 	}
-	
+
+    /**
+     * List objects
+     * @return
+     */
     public ArrayList<String> listObjectName() {
     	Iterator iterator = nameToRef.keySet().iterator();
         ArrayList<String> arrayList = new ArrayList<>();
@@ -69,7 +84,7 @@ public class RMIRegistry implements Runnable {
     }
 
     /**
-     * How could you forget add a while(true)....Your program exit after it got first message
+     * Run a registry server
      */
 	public void run() {
 

@@ -20,7 +20,14 @@ public class Remote640Stub implements Remote640 {
 	public void setClient(Client client){
 		this.client = client;
 	}
-	
+
+    /**
+     * Invoke a method remotely
+     * @param method String - method name
+     * @param args Object[] - args array
+     * @return
+     * @throws Exception
+     */
 	protected Object invokeMethod (String method, Object[] args) throws Exception {
 		MessageManager messageManager = new MessageManager(client);
 
