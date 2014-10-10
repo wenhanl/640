@@ -56,7 +56,7 @@ public class RMIRegistry implements Runnable {
 		if (nameToRef.containsKey(objectname)) {
             return nameToRef.get(objectname);
         } else {
-        	System.out.println("not fund obecjectname!");
+        	//System.out.println("not found obecjectname!");
             throw new Remote640Exception("ObjectName " + objectname + " not exist in registry!");
         }
 	}
@@ -100,7 +100,7 @@ public class RMIRegistry implements Runnable {
                     RMIMessage inMsg = null;
                     try {
                         inMsg = (RMIMessage) RMIMessage.deserialize(obj.data);
-                        System.out.println("RMI Message recieved: " + inMsg.toString());
+                        //System.out.println("RMI Message recieved: " + inMsg.toString());
                     } catch (IOException e) {
                         System.err.println("RMIMessage receive failed: " + e.getMessage());
                     } catch (ClassNotFoundException e) {

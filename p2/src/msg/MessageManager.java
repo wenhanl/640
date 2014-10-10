@@ -30,7 +30,10 @@ public class MessageManager {
         this.type = Type.SERVER;
     }
 
-
+    /**
+     * Send message to remote
+     * @param message
+     */
     public void sendMessage(RMIMessage message){
 
         byte[] msg = new byte[0];
@@ -48,8 +51,7 @@ public class MessageManager {
     }
 
     /**
-     * Careful using this method. Only works for DATA received
-     * New connection or closed connection packet will cause an error
+     * Receive only one message
      * @return RMIMessage received
      */
     public RMIMessage receiveOneMessage(){
@@ -76,11 +78,6 @@ public class MessageManager {
 
         return msg;
     }
-
-    /**
-     * receiveMessage method abandoned in order to support concurrency
-     *
-     */
 
     public void sendReturnValue(Object retvalue){
         RMIMessage message = new RMIMessage();

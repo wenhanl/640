@@ -32,7 +32,7 @@ public class RMIClient {
         regManager.sendLookupMessage(objName);
 
         RMIMessage inMsg = regManager.receiveOneMessage();
-        System.out.println("RMI Message recieved: " + inMsg.toString());
+        //System.out.println("RMI Message recieved: " + inMsg.toString());
         RMIMessage.Type type = inMsg.getType();
         RemoteObjectRef ref = null;
         if(type == RMIMessage.Type.EXCEPTION){
@@ -54,7 +54,7 @@ public class RMIClient {
         regManager.sendListMessage();
 
         RMIMessage inMsg = regManager.receiveOneMessage();
-        System.out.println("RMI Message recieved: " + inMsg.toString());
+        //System.out.println("RMI Message recieved: " + inMsg.toString());
         RMIMessage.Type type = inMsg.getType();
         ArrayList<String> list = null;
         if (type == RMIMessage.Type.RETURN){
@@ -82,8 +82,8 @@ public class RMIClient {
         // Test 1: lookup existent object
         System.out.println("Start test1: Lookup");
         try {
-         RemoteObjectRef ref = client.regLookup("ExampleOne");
-         System.out.println("Remote Object Received: " + ref.getObjectName());
+            RemoteObjectRef ref = client.regLookup("ExampleOne");
+            System.out.println("Remote Object Received: " + ref.getObjectName());
         } catch (Remote640Exception e) {
          e.printStackTrace();
         }
@@ -101,7 +101,7 @@ public class RMIClient {
          System.out.println("Exception: " + e.getMessage());
         }
 
-        System.out.println("Passed");
+        System.out.println("Passed!");
         System.out.println("==========================================");
 
         // Test 3: List Objects
