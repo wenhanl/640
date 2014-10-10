@@ -1,12 +1,12 @@
-package reg;
-
+package remote;
 /**
  * @author CGJ
  *
  */
 import java.io.Serializable;
-import lombok.*;
-import remote640.Remote640Stub;
+
+import lombok.Getter;
+import remote.Remote640Stub;
 
 @Getter
 public class RemoteObjectRef implements Serializable{
@@ -27,14 +27,14 @@ public class RemoteObjectRef implements Serializable{
     }
     
     public Object localise() {
-    	Object stub = null;
+    	Object stub = null;				
 		try {
 			stub = Class.forName(className + "_stub").newInstance();
 			((Remote640Stub)stub).setRemoteRef(this);
 			
 		} catch (InstantiationException | IllegalAccessException
 				| ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			System.out.println("localise  error!");
 			e.printStackTrace();
 		}
 		

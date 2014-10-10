@@ -1,5 +1,4 @@
 package msg;
-
 /**
  * @author CGJ
  *
@@ -7,7 +6,6 @@ package msg;
 import net.Client;
 import net.NetObject;
 import net.Server;
-import reg.RemoteObjectRef;
 
 import java.io.IOException;
 import java.nio.channels.SocketChannel;

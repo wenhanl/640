@@ -1,16 +1,19 @@
-package reg;
-
+	
 import msg.MessageManager;
 import msg.RMIMessage;
 import net.NetObject;
 import net.Server;
-import remote640.Remote640Exception;
+import remote.Remote640Exception;
+import remote.RemoteObjectRef;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.channels.SocketChannel;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author CGJ
@@ -23,6 +26,8 @@ public class RMIRegistry implements Runnable {
     private static Map<String, Object> nameToObj;
     private Server server;
     
+    public final static int serverPort = 15640;
+    
     public RMIRegistry(int regPort) throws IOException {
     	nameToRef = Collections.synchronizedMap(new HashMap<String, RemoteObjectRef>());
     	nameToObj = Collections.synchronizedMap(new HashMap<String, Object>());
@@ -32,7 +37,7 @@ public class RMIRegistry implements Runnable {
     }
     
 	public void bind(String objectName, Object object) throws UnknownHostException{
-		RemoteObjectRef ref = new RemoteObjectRef(hostname, port, objectName, object.getClass().getName());
+		RemoteObjectRef ref = new RemoteObjectRef(hostname, serverPort, objectName, object.getClass().getName());
 		nameToObj.put(objectName, object);
 		nameToRef.put(objectName, ref);
 	}
@@ -45,6 +50,7 @@ public class RMIRegistry implements Runnable {
 		if (nameToRef.containsKey(objectname)) {
             return nameToRef.get(objectname);
         } else {
+        	System.out.println("not fund obecjectname!");
             throw new Remote640Exception("ObjectName " + objectname + " not exist in registry!");
         }
 	}

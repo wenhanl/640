@@ -1,12 +1,9 @@
-package remote640; /**
- * 
- */
+package remote;
 
-import msg.MessageManager;
-import msg.RMIMessage;
+import msg.*;
 import net.Client;
-import reg.RemoteObjectRef;
-import remote640.Remote640;
+import remote.Remote640;
+import remote.Remote640Exception;
 
 /**
  * @author CGJ
@@ -20,6 +17,9 @@ public class Remote640Stub implements Remote640 {
 	public void setRemoteRef(RemoteObjectRef ref) {
         this.ref = ref;
     }
+	public void setClient(Client client){
+		this.client = client;
+	}
 	
 	protected Object invokeMethod (String method, Object[] args) throws Exception {
 		MessageManager messageManager = new MessageManager(client);
@@ -37,9 +37,7 @@ public class Remote640Stub implements Remote640 {
 			throw resMessage.getException();
 		else 
 			throw new Remote640Exception("RMIMessage Return Type Error!");
-		
-		
-			
+
 		return retvalue;
 	}
 
